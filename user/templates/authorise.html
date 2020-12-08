@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block content %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <h2>Authorise</h2>
+    <form method="post" autocomplete="off"> {% csrf_token %}
+        {% for field in data %}
+            <p>
+                {{ field|as_crispy_field }}
+            </p>
+        {% endfor %}
+        <button class="btn btn-outline-success" type="submit">Log in</button>
+    </form>
+{% endblock content %}

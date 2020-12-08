@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block content %}
+    <h2>Register</h2>
+    <form method="post" autocomplete="off"> {% csrf_token %}
+        {% for field in data %}
+            <p>
+                {{ field |as_crispy_field }}
+            </p>
+        {% endfor %}
+        <button class="btn btn-outline-success" type="submit">Confirm</button>
+    </form>
+{% endblock content %}

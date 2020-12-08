@@ -1,0 +1,64 @@
+{% extends "base.html" %} }
+{% load crispy_forms_filters %}
+{% block content %}
+    <script>
+        for (let message of {{ messages }}) {
+            alert(message)
+        }
+
+        function createHead(table, text) {
+            let head = table.createTHead();
+            let row = head.insertRow();
+            row.style.backgroundColor = "grey";
+            let column = document.createElement("td");
+            column.setAttribute("align", "center");
+            let txt = document.createTextNode(text);
+            column.appendChild(txt);
+            row.appendChild(column);
+        }
+
+        function createRows(table, size1, size2, name) {
+            for (let i = 0; i < size1; i++) {
+                let row = table.insertRow();
+                for (let j = 0; j < size2; j++) {
+                    let column = row.insertCell();
+                    let input = document.createElement("input");
+                    input.setAttribute("type", "text");
+                    input.setAttribute("required", "true");
+                    input.setAttribute("name", `${name}${i + 1}${j + 1}`)
+                    input.setAttribute("class", "form-control")
+                    column.appendChild(input);
+                }
+            }
+        }
+
+        function createTable(size, text, name) {
+            let table = document.createElement("table");
+            createHead(table, text);
+            createRows(table, size, size, name);
+            table.setAttribute("border", "2");
+            return table;
+        }
+
+        function createForm() {
+            let form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("autocomplete", "off");
+            let size = document.createElement("input");
+            size.setAttribute("type", "text");
+            size.setAttribute("required", "true");
+            form.appendChild(size);
+            let button = document.createElement("button")
+            button.setAttribute()
+        }
+
+        document.body.append(createTable(3, "Odd", "Even"));
+    </script>
+    {% if xi %}
+        {% for i in xi %}
+            <p>
+                x = {{ i }}
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endblock content %}
