@@ -1,2 +1,2 @@
 web: gunicorn web.wsgi:application --log-file -
-celery: celery worker -A forum -l info -c 4
+worker: celery -A web worker -B --loglevel=info
