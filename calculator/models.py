@@ -48,11 +48,15 @@ class Calculator(models.Model):
             "e": self.e}
 
     def calculate_seidel(self):
+        start = float(time.time()/1000)
         x = [[0 for j in range(len(self.vector_b))] for i in range(1)]
         matrix = [[float(self.matrix_a[i][j]) for j in range(self.size)] for i in range(self.size)]
         vector = [float(self.vector_b[j]) for j in range(self.size)]
         i = 0
         while True:
+            step = float(time.time() / 1000)
+            if step - start >= 200:
+                return False
             x.append(self.seidel(x[i], matrix, vector))
             i += 1
             if len(x) >= 2 and max([fabs(x[i][j] - x[i - 1][j]) for j in range(len(x[0]))]) < self.e:
@@ -71,11 +75,7 @@ class Calculator(models.Model):
 
     @staticmethod
     def results(user_id):
-        tasks = list(Calculator.objects.all().filter(user_id=user_id))
-        for i in tasks:
-            if 0 in i.result:
-                tasks.remove(i)
-        return tasks
+        return list(Calculator.objects.all().filter(user_id=user_id))
 
     @staticmethod
     def delete_by_user_id(user_id):
