@@ -11,14 +11,14 @@ def calculate_seidel_task(self, calculator_id):
     calculator = Calculator.get_by_id(calculator_id)
     x = calculator.calculate_seidel()
     if not x:
-        calculator.update(["No answer" for i in range(calculator.size)])
-        for i in range(2):
+        for i in range(50):
             time.sleep(1)
-            progress_recorder.set_progress(i + 50 * (i + 1), 100, description="Calculating...")
+            progress_recorder.set_progress((i + 1) * 2, 100, description="Calculating...")
+        calculator.update(["No answer" for i in range(calculator.size)])
         return f"This task has no answer!!!"
     else:
         for i in range(100):
             time.sleep(1)
             progress_recorder.set_progress(i + 1, 100, description="Calculating...")
         calculator.update(x)
-    return f"Result: x = {x}"
+        return f"Result: x = {x}"

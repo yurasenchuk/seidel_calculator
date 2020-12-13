@@ -48,14 +48,13 @@ class Calculator(models.Model):
             "e": self.e}
 
     def calculate_seidel(self):
-        start = float(time.time()/1000)
+        start = int(time.time())
         x = [[0 for j in range(len(self.vector_b))] for i in range(1)]
         matrix = [[float(self.matrix_a[i][j]) for j in range(self.size)] for i in range(self.size)]
         vector = [float(self.vector_b[j]) for j in range(self.size)]
         i = 0
         while True:
-            step = float(time.time() / 1000)
-            if step - start >= 200:
+            if int(time.time()) - start > 30:
                 return False
             x.append(self.seidel(x[i], matrix, vector))
             i += 1
