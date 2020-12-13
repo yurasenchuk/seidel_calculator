@@ -71,7 +71,11 @@ class Calculator(models.Model):
 
     @staticmethod
     def results(user_id):
-        return list(Calculator.objects.all().filter(user_id=user_id))
+        tasks = list(Calculator.objects.all().filter(user_id=user_id))
+        for i in tasks:
+            if 0 in i.result:
+                tasks.remove(i)
+        return tasks
 
     @staticmethod
     def delete_by_user_id(user_id):
