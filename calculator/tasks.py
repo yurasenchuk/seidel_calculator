@@ -13,4 +13,5 @@ def calculate_seidel_task(self, calculator_id):
     for i in range(100):
         time.sleep(1)
         progress_recorder.set_progress(i + 1, 100, description="Calculating...")
+    calculator.update(x)
     return f"Result: x = {x}"

@@ -56,7 +56,6 @@ class Calculator(models.Model):
             x.append(self.seidel(x[i], matrix, vector))
             i += 1
             if len(x) >= 2 and max([fabs(x[i][j] - x[i - 1][j]) for j in range(len(x[0]))]) < self.e:
-                self.update(x[i])
                 return x[i]
 
     def seidel(self, x, matrix, vector):
