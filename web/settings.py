@@ -19,6 +19,8 @@ import redis
 import django_heroku
 import dj_database_url
 
+from web.celery import app
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -54,6 +56,9 @@ CACHES = {
         }
     }
 }
+
+app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
 CELERY_BROKER_URL = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-35-170-13-190.compute-1.amazonaws.com:21879'
 
