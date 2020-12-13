@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
     <h2 class="mt-2">My tasks</h2>
+    <a class="btn btn-outline-danger" href="{% url "delete_tasks" %}">Clear all</a>
     <script>
         {% for message in messages %}
             alert("{{ message }}");

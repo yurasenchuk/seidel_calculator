@@ -73,3 +73,14 @@ class Calculator(models.Model):
     @staticmethod
     def results(user_id):
         return list(Calculator.objects.all().filter(user_id=user_id))
+
+    @staticmethod
+    def delete_by_user_id(user_id):
+        try:
+            tasks = Calculator.results(user_id)
+            for i in tasks:
+                i.delete()
+            return True
+        except Calculator.DoesNotExist:
+            LOGGER.error("Task does not exist")
+        return False

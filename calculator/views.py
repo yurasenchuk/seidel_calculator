@@ -53,3 +53,15 @@ def results_for_user(request):
     tasks.sort(key=lambda x: x.pk, reverse=True)
     tasks = dumps([i.to_dict() for i in tasks])
     return render(request, "results.html", context={"results": tasks})
+
+
+def clear_tasks(request):
+    if not request.user.is_authenticated:
+        return redirect(authorise)
+    result = Calculator.delete_by_user_id(request.user.id)
+    if result:
+        messages.success(request, "Successfully cleared")
+    else:
+        messages.warning(request, "Something went wrong")
+    return render(request, "results.html", context={"results": []})
+
