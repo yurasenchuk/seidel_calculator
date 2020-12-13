@@ -21,7 +21,7 @@ def home(request):
             for j in range(context["size"]):
                 context["matrix"][i][j] = request.POST.get(f"matrix[{i}][{j}]")
         if validate_matrix(context["matrix"]) and validate_vector(context["vector"]):
-            if context["eps"] < 0 or context["eps"] > 1:
+            if context["eps"] < 0 or context["eps"] >= 1:
                 messages.warning(request, "Epsilon should be greater than 0 and less than 1")
             else:
                 context["matrix"] = [[float(context["matrix"][j][i]) for i in range(context["size"])] for j in
