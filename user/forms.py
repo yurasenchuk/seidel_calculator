@@ -25,11 +25,10 @@ class RegisterForm(UserCreationForm):
                                 help_text="Enter last name")
     email = forms.EmailField(validators=[validate_email], required=True, max_length=100, label="Email",
                              help_text="Enter email")
-    role = forms.ChoiceField(label="Role", choices=ROLE_CHOICES, required=True)
 
     class Meta:
         model = CustomUser
-        fields = ("first_name", "last_name", "middle_name", "email", "password1", "password2", "role")
+        fields = ("first_name", "last_name", "middle_name", "email", "password1", "password2")
 
     def save(self, commit=True):
         return CustomUser.create(self.cleaned_data.get("email"), self.cleaned_data.get("password1"),

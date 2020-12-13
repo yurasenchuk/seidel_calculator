@@ -1,4 +1,5 @@
 import copy
+import time
 from concurrent.futures._base import LOGGER
 from math import fabs
 
@@ -29,23 +30,46 @@ class Calculator(models.Model):
         self.result = result
         self.save()
 
+    @staticmethod
+    def get_by_id(calculator_id):
+        try:
+            calculator = Calculator.objects.get(id=calculator_id)
+            return calculator
+        except CustomUser.DoesNotExist:
+            LOGGER.error("User does not exist")
+        return False
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "matrix_a": self.matrix_a,
+            "vector_b": self.vector_b,
+            "result": self.result,
+            "e": self.e}
+
     def calculate_seidel(self):
         x = [[0 for j in range(len(self.vector_b))] for i in range(1)]
+        matrix = [[float(self.matrix_a[i][j]) for j in range(self.size)] for i in range(self.size)]
+        vector = [float(self.vector_b[j]) for j in range(self.size)]
         i = 0
         while True:
-            x.append(self.seidel(x[i]))
+            x.append(self.seidel(x[i], matrix, vector))
             i += 1
             if len(x) >= 2 and max([fabs(x[i][j] - x[i - 1][j]) for j in range(len(x[0]))]) < self.e:
-                self.result = x[i]
+                self.update(x[i])
                 return x[i]
 
-    def seidel(self, x):
-        n = len(self.matrix_a)
+    def seidel(self, x, matrix, vector):
+        n = len(matrix)
         cur_x = copy.deepcopy(x)
         for j in range(0, n):
-            d = copy.deepcopy(self.vector_b[j])
+            d = copy.deepcopy(vector[j])
             for i in range(0, n):
                 if j != i:
-                    d -= self.matrix_a[j][i] * cur_x[i]
-            cur_x[j] = d / self.matrix_a[j][j]
+                    d -= matrix[j][i] * cur_x[i]
+            cur_x[j] = d / matrix[j][j]
         return cur_x
+
+    @staticmethod
+    def results(user_id):
+        return list(Calculator.objects.all().filter(user_id=user_id))

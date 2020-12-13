@@ -9,12 +9,17 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+from urllib.parse import urlparse
 
+import redis
+import django_heroku
+import dj_database_url
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -30,6 +35,10 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 AUTH_USER_MODEL = 'user.CustomUser'
 
+CELERY_BROKER_URL = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-35-170-13-190.compute-1.amazonaws.com:21879'
+
+CELERY_RESULT_BACKEND = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-35-170-13-190.compute-1.amazonaws.com:21879'
+
 
 # Application definition
 
@@ -43,6 +52,8 @@ INSTALLED_APPS = [
     'user',
     'calculator',
     'crispy_forms',
+    'celery',
+    'celery_progress',
 
 ]
 
@@ -77,21 +88,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'web',
-        'USER': 'postgres',
-        'PASSWORD': '591563',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'web',
+#         'USER': 'postgres',
+#         'PASSWORD': '591563',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config()
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -111,7 +124,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -125,10 +137,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+django_heroku.settings(locals())
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,0 +1,94 @@
+{% extends "base.html" %} }
+{% load static %}
+{% block content %}
+    <h2 class="mt-2">My tasks</h2>
+    <script>
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
+        function createRowsForMatrix(table, values) {
+            for (let i of values) {
+                let row = table.insertRow();
+                row.style.backgroundColor = "white";
+                for (let j of i) {
+                    let column = row.insertCell();
+                    let txt = document.createTextNode(j);
+                    column.appendChild(txt);
+                }
+            }
+            for(let i of values) {
+                console.log(i);
+            }
+            console.log("createMatrix");
+        }
+
+
+        function createRowsForVector(table, values) {
+            for (let i of values) {
+                let row = table.insertRow();
+                row.style.backgroundColor = "white";
+                let column = row.insertCell();
+                let txt = document.createTextNode(i);
+                column.appendChild(txt);
+            }
+            console.log(values);
+            console.log("createVector");
+        }
+
+        function createTable(name, values) {
+            let table1 = document.createElement("table");
+            if (name === "matrix") {
+                createRowsForMatrix(table1, values);
+            } else {
+                createRowsForVector(table1, values);
+            }
+            table1.setAttribute("border", "2");
+            return table1;
+        }
+
+        function createMainArticle(task) {
+            let article = document.createElement("article");
+            article.setAttribute("id", `${task.id}`);
+            let table = document.createElement("table");
+            let row = table.insertRow();
+            row.style.backgroundColor = "grey";
+            let columnMatrix = document.createElement("td");
+            columnMatrix.setAttribute("align", "center");
+            let txtMatrix = document.createTextNode("Matrix A");
+            columnMatrix.appendChild(txtMatrix);
+            columnMatrix.appendChild(createTable("matrix", task.matrix_a));
+            row.appendChild(columnMatrix);
+            let columnVector = document.createElement("td");
+            columnVector.setAttribute("align", "center");
+            let txtVector = document.createTextNode("Vector B");
+            columnVector.appendChild(txtVector);
+            columnVector.appendChild(createTable("vector", task.vector_b));
+            row.appendChild(columnVector);
+            article.appendChild(table);
+            let epsilon = document.createElement("p");
+            let node = document.createTextNode(`Epsilon = ${task.e}`);
+            epsilon.appendChild(node);
+            article.appendChild(epsilon);
+            for (let x of task.result) {
+                let p = document.createElement("p");
+                let node = document.createTextNode(`x = ${x}`);
+                p.appendChild(node);
+                article.appendChild(p);
+
+            }
+            console.log("createArticle");
+            return article;
+        }
+
+        function createArticles(tasks) {
+            let div3 = document.getElementById("div3");
+            console.log("createArticles");
+            for (let task of tasks) {
+                div3.appendChild(createMainArticle(task));
+                console.log("article created");
+            }
+        }
+
+        createArticles(JSON.parse("{{ results|escapejs }}"));
+    </script>
+{% endblock content %}

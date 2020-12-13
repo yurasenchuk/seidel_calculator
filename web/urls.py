@@ -18,6 +18,7 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('calculator.urls')),
     path('user/', include('user.urls')),
+    path('celery-progress/', include('celery_progress.urls')),
 ]
 handler400 = "web.views.bad_request"
 handler401 = "web.views.unauthorized"

@@ -1,0 +1,26 @@
+{% extends "home.html" %}
+{% load static %}
+{% block progress %}
+    <div class="text-center" style="font-size: 14px">
+        <div id="progress-bar-message">
+            Click the "Confirm" button
+        </div>
+    </div>
+    <div class='progress-wrapper' style="padding-top: 10px;">
+        <div id='progress-bar' class='progress-bar progress-bar-striped' role='progressbar'
+             style="height:30px; width: 0%; border-radius: 5px">&nbsp;
+        </div>
+    </div>
+    <div id="celery-result">
+    </div>
+{% endblock progress %}
+
+{% block progress_bar_js %}
+        <script type="text/javascript">
+            // Progress Bar (JQuery)
+            $(function () {
+                let progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+                CeleryProgressBar.initProgressBar(progressUrl, {});
+            });
+        </script>
+{% endblock progress_bar_js %}

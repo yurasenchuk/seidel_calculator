@@ -1,11 +1,9 @@
 {% extends "base.html" %} }
-{% load crispy_forms_filters %}
 {% block content %}
     <script>
-        for (let message of {{ messages }}) {
-            alert(message)
-        }
-
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
         function createHead(table, text) {
             let head = table.createTHead();
             let row = head.insertRow();
@@ -17,43 +15,166 @@
             row.appendChild(column);
         }
 
-        function createRows(table, size1, size2, name) {
-            for (let i = 0; i < size1; i++) {
+        function createRowsForMatrix(table, size, name, values) {
+            for (let i = 0; i < size; i++) {
                 let row = table.insertRow();
-                for (let j = 0; j < size2; j++) {
+                for (let j = 0; j < size; j++) {
                     let column = row.insertCell();
                     let input = document.createElement("input");
                     input.setAttribute("type", "text");
                     input.setAttribute("required", "true");
-                    input.setAttribute("name", `${name}${i + 1}${j + 1}`)
+                    input.setAttribute("name", `${name}[${i}][${j}]`)
+                    input.setAttribute("value", values[i][j])
                     input.setAttribute("class", "form-control")
                     column.appendChild(input);
                 }
             }
         }
 
-        function createTable(size, text, name) {
+
+        function createRowsForVector(table, size, name, values) {
+            for (let i = 0; i < size; i++) {
+                let row = table.insertRow();
+                let column = row.insertCell();
+                let input = document.createElement("input");
+                input.setAttribute("type", "text");
+                input.setAttribute("required", "true");
+                input.setAttribute("name", `${name}[${i}]`)
+                input.setAttribute("value", values[i])
+                input.setAttribute("class", "form-control")
+                column.appendChild(input);
+            }
+        }
+
+        function createTable(size, name, values) {
             let table = document.createElement("table");
-            createHead(table, text);
-            createRows(table, size, size, name);
+            if (name === "matrix") {
+                createRowsForMatrix(table, size, name, values);
+            } else {
+                createRowsForVector(table, size, name, values);
+            }
             table.setAttribute("border", "2");
             return table;
         }
 
-        function createForm() {
+        function createSizeDiv(_size) {
+            let div = document.createElement("div");
+            div.setAttribute("class", "col-8");
+            div.setAttribute("id", "div4");
+            let label = document.createElement("label");
+            let node = document.createTextNode("Size");
+            label.setAttribute("for", "size");
+            label.appendChild(node);
+            div.appendChild(label);
+            let size = document.createElement("input");
+            size.setAttribute("type", "text");
+            size.setAttribute("name", "size");
+            size.setAttribute("required", "true");
+            size.setAttribute("value", String(_size));
+            size.setAttribute("id", "size")
+            div.appendChild(size);
+            let button = document.createElement("input");
+            button.setAttribute("class", "btn btn-outline-success");
+            button.setAttribute("type", "button");
+            button.setAttribute("value", "Confirm");
+            button.addEventListener("click", sizeDivClick);
+            div.appendChild(button);
+            return div;
+        }
+
+        function createMainForm(size, matrix, vector, eps) {
             let form = document.createElement("form");
             form.setAttribute("method", "post");
             form.setAttribute("autocomplete", "off");
-            let size = document.createElement("input");
-            size.setAttribute("type", "text");
-            size.setAttribute("required", "true");
-            form.appendChild(size);
-            let button = document.createElement("button")
-            button.setAttribute()
+            form.setAttribute("id", "main_form");
+            let inputElem = document.createElement("input");
+            inputElem.setAttribute("type", "hidden");
+            inputElem.setAttribute("name", "csrfmiddlewaretoken");
+            inputElem.setAttribute("value", "{{ csrf_token }}");
+            form.appendChild(inputElem);
+            let table = document.createElement("table");
+            let row = table.insertRow();
+            row.style.backgroundColor = "grey";
+            let columnMatrix = document.createElement("td");
+            columnMatrix.setAttribute("align", "center");
+            let txtMatrix = document.createTextNode("Matrix A");
+            columnMatrix.appendChild(txtMatrix);
+            columnMatrix.appendChild(createTable(size, "matrix", matrix));
+            row.appendChild(columnMatrix);
+            let columnVector = document.createElement("td");
+            columnVector.setAttribute("align", "center");
+            let txtVector = document.createTextNode("Vector B");
+            columnVector.appendChild(txtVector);
+            columnVector.appendChild(createTable(size, "vector", vector));
+            row.appendChild(columnVector);
+            form.appendChild(table);
+            let label = document.createElement("label");
+            let node = document.createTextNode("Epsilon");
+            label.setAttribute("for", "confirm_main_form");
+            label.appendChild(node);
+            form.appendChild(label);
+            let epsilon = document.createElement("input");
+            epsilon.setAttribute("type", "text");
+            epsilon.setAttribute("name", "eps");
+            epsilon.setAttribute("required", "true");
+            epsilon.setAttribute("value", eps);
+            form.appendChild(epsilon);
+            let cur_size = document.createElement("input");
+            cur_size.setAttribute("type", "hidden");
+            cur_size.setAttribute("name", "size");
+            cur_size.setAttribute("value", size);
+            form.appendChild(cur_size);
+            let button = document.createElement("input");
+            button.setAttribute("class", "btn btn-outline-success");
+            button.setAttribute("type", "submit");
+            button.setAttribute("id", "confirm_main_form");
+            button.setAttribute("value", "Confirm");
+            form.appendChild(button);
+            return form;
         }
 
-        document.body.append(createTable(3, "Odd", "Even"));
+        function sizeDivClick() {
+            let size = document.getElementById("size").value;
+            if (parseInt(size) === 0) {
+                alert("Size should be greater than 0!")
+            } else if (parseInt(size) > 10) {
+                alert("Size should be less than 11!")
+            } else {
+                let eps = 0.1;
+                let matrix = [];
+                for (let i = 0; i < size; i++) {
+                    matrix[i] = [];
+                    for (let j = 0; j < size; j++) {
+                        matrix[i][j] = 0;
+                    }
+                }
+                let vector = [];
+                for (let i = 0; i < size; i++) {
+                    vector[i] = 0;
+                }
+                let element = document.getElementById("div4");
+                element.parentNode.removeChild(element);
+                let div3 = document.getElementById("div3");
+                div3.appendChild(createForm(size, matrix, vector, eps));
+            }
+        }
+
+        function createForm(size, matrix, vector, eps) {
+            if (parseInt(size) === 0) {
+                return createSizeDiv(size);
+            } else {
+                return createMainForm(size, matrix, vector, eps);
+            }
+        }
+
+        let div3 = document.getElementById("div3");
+        div3.appendChild(createForm({{ size }}, JSON.parse("{{ matrix|escapejs }}"), JSON.parse("{{ vector|escapejs }}"), {{ eps }}));
     </script>
+    <div class="container" style="padding-top: 20px;">
+        <div class="card" style="height: 120px;">
+            {% block progress %}{% endblock progress %}
+        </div>
+    </div>
     {% if xi %}
         {% for i in xi %}
             <p>
