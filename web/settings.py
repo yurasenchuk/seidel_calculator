@@ -37,25 +37,25 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 AUTH_USER_MODEL = 'user.CustomUser'
 
-# r = redis.from_url(os.environ.get("REDIS_URL"))
-# BROKER_URL = redis.from_url(os.environ.get("REDIS_URL"))
-# CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = 'Canada/Eastern'
-#
-# redis_url = urlparse(os.environ.get('REDIS_URL'))
-# CACHES = {
-#     "default": {
-#         "BACKEND": "redis_cache.RedisCache",
-#         "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
-#         "OPTIONS": {
-#             "PASSWORD": redis_url.password,
-#             "DB": 0,
-#         }
-#     }
-# }
+r = redis.from_url(os.environ.get("REDIS_URL"))
+BROKER_URL = redis.from_url(os.environ.get("REDIS_URL"))
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Canada/Eastern'
+
+redis_url = urlparse(os.environ.get('REDIS_URL'))
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
+        "OPTIONS": {
+            "PASSWORD": redis_url.password,
+            "DB": 0,
+        }
+    }
+}
 
 app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
