@@ -60,9 +60,9 @@ CACHES = {
 app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
-CELERY_BROKER_URL = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-35-170-13-190.compute-1.amazonaws.com:21879'
+CELERY_BROKER_URL = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-54-160-21-124.compute-1.amazonaws.com:31839'
 
-CELERY_RESULT_BACKEND = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-35-170-13-190.compute-1.amazonaws.com:21879'
+CELERY_RESULT_BACKEND = 'redis://:p3dfc07bab58a4090fa58c4fb0e164314da73a06ea34f981935244a3557fbd15f@ec2-54-160-21-124.compute-1.amazonaws.com:31839'
 
 # Application definition
 
