@@ -1,3 +1,2 @@
 web: gunicorn web.wsgi:application --log-file -
-worker: celery -A web worker -l info --pool=solo
-
+worker: celery -A proj worker --loglevel=INFO --concurrency=10
