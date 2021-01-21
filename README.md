@@ -1,7 +1,8 @@
 # seidel_calculator
 
 Seidel calculator - educational project written in Django using Celery
-Also used Redis as Message broker, PostgreSQL as DB
+Also used Redis as Message broker, PostgreSQL as DB  
+Written to show how we can work with time-consuming tasks (operating time simulated)
 
 Project configurated to deploy on Heroku and doesn't work localy
 
